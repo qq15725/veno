@@ -25,8 +25,8 @@
     
 	type User struct {
 		model.Model
-		table      string `model:"User"`
-		primaryKey uint   `model:"UserId"`
+		table      string `model:"users"`
+		primaryKey uint   `model:"id"`
 	}
     ```
   
@@ -38,9 +38,9 @@
     import (
 		"fmt"
 		_ "github.com/go-sql-driver/mysql"
-		"github.com/qq15725/go/app/models"
 		"github.com/qq15725/go/database/dsn"
 		"github.com/qq15725/go/database/model"
+		"models"
     )
   
 	func main() {
@@ -58,7 +58,7 @@
 		defer model.CloseConnections()
   
 		fmt.Println(
-			model.Query((*models.User)(nil)).Where("UserId", ">", 2).Get(),
+			model.Query((*models.User)(nil)).Find(1),
 		)
 	}
     ```
@@ -71,7 +71,7 @@
     
     简单的 web 框架
     
-    配置 config/database.json
+    配置 app/config/database.json
     
     ```json
     {
@@ -89,21 +89,81 @@
     }
 
     ```
+  
+    models/user.go
+    
+    ```go
+    package models
+    
+    import (
+    	"github.com/qq15725/go/database/model"
+    )
+    
+    type User struct {
+    	model.Model
+    	table      string `model:"users"`
+    	primaryKey uint   `model:"id"`
+    }
+    ```
+  
+    controller/user.go
+    
+    ```go
+  
+    package controller
+    
+    import (
+    	"github.com/qq15725/go/database/model"
+    	"github.com/qq15725/go/veno"
+    	"net/http"
+    	"models"
+    )
+    
+    type UserController struct {
+    }
+    
+    func (uc *UserController) Index(ctx *veno.HttpContext) {
+    	ctx.JSON(
+    		http.StatusOK,
+    		model.Query((*models.User)(nil)).Get(),
+    	)
+    }
+
+    ```
     
     main.go
     
     ```go
-	package main
-  
-	import "github.com/qq15725/go/veno"
+    package main
+    
+    import (
+        _ "github.com/go-sql-driver/mysql"
+        "github.com/qq15725/go/veno"
+        "controller"
+        "log"
+        "path"
+        "runtime"
+    )
+    
+    var (
+        ROOT string
+    )
+    
+    func init() {
+        if _, file, _, ok := runtime.Caller(0); ok {
+            ROOT = path.Dir(file)
+            log.Println("ROOT:", ROOT)
+        }
+    }
+    
+    func main() {
+        app := veno.New(ROOT)
+    
+        app.Router.GET("/users", (&controller.UserController{}).Index)
+    
+        app.Run(":80")
+    }
 
-	func main() {
-		app := veno.New()
-		app.Router.GET("/", func (ctx *veno.HttpContext) {
-			ctx.String(200, "Hello, World!")  
-		})
-		app.Run(":80")
-	}
     ```
     
     访问 `http://localhost/`

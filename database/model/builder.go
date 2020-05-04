@@ -91,7 +91,7 @@ func (mb *Builder) Get() []map[string]interface{} {
 }
 
 func (mb *Builder) First() map[string]interface{} {
-	return mb.query.Get()[0]
+	return mb.query.Limit(1).Get()[0]
 }
 
 func (mb *Builder) WhereKey(id interface{}) *Builder {
