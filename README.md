@@ -71,7 +71,7 @@
     
     简单的 web 框架
     
-    配置 app/config/database.json
+    config/database.json
     
     ```json
     {
