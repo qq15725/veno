@@ -99,7 +99,7 @@
 
 	func main() {
 		app := veno.New()
-		app.GET("/", func (ctx *veno.HttpContext) {
+		app.Router.GET("/", func (ctx *veno.HttpContext) {
 			ctx.String(200, "Hello, World!")  
 		})
 		app.Run(":80")
