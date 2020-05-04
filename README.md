@@ -17,50 +17,50 @@
     models/user.go
     
     ```go
-    package models
+	package models
     
-    import (
-    	"github.com/qq15725/go/database/model"
-    )
+	import (
+		"github.com/qq15725/go/database/model"
+	)
     
-    type User struct {
-    	model.Model
-    	table      string `model:"User"`
-    	primaryKey uint   `model:"UserId"`
-    }
+	type User struct {
+		model.Model
+		table      string `model:"User"`
+		primaryKey uint   `model:"UserId"`
+	}
     ```
   
     main.go
   
     ```go
-    package main
+	package main
   
     import (
-        "fmt"
-        _ "github.com/go-sql-driver/mysql"
-        "github.com/qq15725/go/app/models"
-       	"github.com/qq15725/go/database/dsn"
-        "github.com/qq15725/go/database/model"
+		"fmt"
+		_ "github.com/go-sql-driver/mysql"
+		"github.com/qq15725/go/app/models"
+		"github.com/qq15725/go/database/dsn"
+		"github.com/qq15725/go/database/model"
     )
   
-    func main() {
-        model.SetConnections(map[string]dsn.Connector{
-            "mysql": &dsn.Mysql{
-                Host:     "127.0.0.1",
-                Port:     3306,
-                Database: "database",
-                Username: "root",
-                Password: "",
-                Charset:  "utf8mb4",
-            },
-        })
+	func main() {
+		model.SetConnections(map[string]dsn.Connector{
+			"mysql": &dsn.Mysql{
+				Host:     "127.0.0.1",
+				Port:     3306,
+				Database: "database",
+				Username: "root",
+				Password: "",
+				Charset:  "utf8mb4",
+			},
+		})
   
-        defer model.CloseConnections()
+		defer model.CloseConnections()
   
-        fmt.Println(
-          model.Query((*models.User)(nil)).Where("UserId", ">", 2).Get(),
-        )
-    }
+		fmt.Println(
+			model.Query((*models.User)(nil)).Where("UserId", ">", 2).Get(),
+		)
+	}
     ```
   
 - router
@@ -93,17 +93,17 @@
     main.go
     
     ```go
-    package main
+	package main
   
-    import "github.com/qq15725/go/veno"
+	import "github.com/qq15725/go/veno"
 
-    func main() {
-        app := veno.New()
-        app.GET("/", func (ctx *veno.HttpContext) {
-            ctx.String(200, "Hello, World!")  
-        })
-        app.Run(":80")
-    }
+	func main() {
+		app := veno.New()
+		app.GET("/", func (ctx *veno.HttpContext) {
+			ctx.String(200, "Hello, World!")  
+		})
+		app.Run(":80")
+	}
     ```
     
     访问 `http://localhost/`
