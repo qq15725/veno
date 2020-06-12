@@ -1,6 +1,6 @@
 package contracts
 
-import "github.com/qq15725/go/database/query/parts"
+import "github.com/qq15725/veno/database/query/parts"
 
 type QueryBuilder interface {
 	GetBuilderFrom() string

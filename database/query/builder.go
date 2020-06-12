@@ -1,9 +1,9 @@
 package query
 
 import (
-	"github.com/qq15725/go/database"
-	"github.com/qq15725/go/database/query/grammars"
-	"github.com/qq15725/go/database/query/parts"
+	"github.com/qq15725/veno/database"
+	"github.com/qq15725/veno/database/query/grammars"
+	"github.com/qq15725/veno/database/query/parts"
 )
 
 type Builder struct {

@@ -1,25 +1,21 @@
 package model
 
 import (
-	"github.com/qq15725/go/database/query"
+	"github.com/qq15725/veno/database/query"
+	"github.com/qq15725/veno/support/refl"
 	"reflect"
 )
 
 type Builder struct {
-	model     interface{}
-	modelType reflect.Type
-	query     *query.Builder
+	model   interface{}
+	modelT  reflect.Type
+	query   *query.Builder
+	tagName string
 }
 
 func (mb *Builder) SetModel(model interface{}) *Builder {
-	modelType := reflect.TypeOf(model)
-
-	if modelType.Kind() == reflect.Ptr {
-		modelType = modelType.Elem()
-	}
-
 	mb.model = model
-	mb.modelType = modelType
+	mb.modelT = refl.IndirectType(reflect.TypeOf(model))
 	return mb
 }
 
@@ -30,26 +26,23 @@ func (mb *Builder) SetQuery(query *query.Builder) *Builder {
 }
 
 func (mb *Builder) GetConnection() string {
-	connection, _ := mb.modelType.FieldByName("connection")
-	return connection.Tag.Get("model")
+	return refl.FieldTagValue(mb.modelT, "connection", mb.tagName)
 }
 
 func (mb *Builder) GetTable() string {
-	table, ok := mb.modelType.FieldByName("table")
-	if ok {
-		return table.Tag.Get("model")
+	if v := refl.FieldTagValue(mb.modelT, "table", mb.tagName); v != "" {
+		return v
 	}
 	// TODO 蛇形命名
-	return mb.modelType.Name()
+	return mb.modelT.Name()
 }
 
 func (mb *Builder) GetKeyName() string {
-	primaryKey, ok := mb.modelType.FieldByName("primaryKey")
-	if ok {
-		return primaryKey.Tag.Get("model")
+	if v := refl.FieldTagValue(mb.modelT, "primaryKey", mb.tagName); v != "" {
+		return v
 	}
 	// TODO 蛇形命名
-	return mb.modelType.Name() + "_id"
+	return mb.modelT.Name() + "_id"
 }
 
 func (mb *Builder) Select(columns []string) *Builder {
@@ -86,12 +79,21 @@ func (mb *Builder) ToSql() string {
 	return mb.query.ToSql()
 }
 
-func (mb *Builder) Get() []map[string]interface{} {
-	return mb.query.Get()
+func (mb *Builder) Get() []interface{} {
+	models := make([]interface{}, 0)
+	rows := mb.query.Get()
+	for _, row := range rows {
+		model := reflect.New(mb.modelT).Elem()
+		for k, v := range row {
+			refl.SetFieldValue(model, k, v)
+		}
+		models = append(models, model.Interface())
+	}
+	return models
 }
 
-func (mb *Builder) First() map[string]interface{} {
-	return mb.query.Limit(1).Get()[0]
+func (mb *Builder) First() interface{} {
+	return mb.Limit(1).Get()[0]
 }
 
 func (mb *Builder) WhereKey(id interface{}) *Builder {
@@ -99,10 +101,12 @@ func (mb *Builder) WhereKey(id interface{}) *Builder {
 	return mb
 }
 
-func (mb *Builder) Find(id interface{}) map[string]interface{} {
+func (mb *Builder) Find(id interface{}) interface{} {
 	return mb.WhereKey(id).First()
 }
 
 func NewBuilder() *Builder {
-	return &Builder{}
+	return &Builder{
+		tagName: "model",
+	}
 }

@@ -20,7 +20,7 @@
 	package models
     
 	import (
-		"github.com/qq15725/go/database/model"
+		"github.com/qq15725/veno/database/model"
 	)
     
 	type User struct {
@@ -37,9 +37,9 @@
   
     import (
 		"fmt"
-		_ "github.com/go-sql-driver/mysql"
-		"github.com/qq15725/go/database/dsn"
-		"github.com/qq15725/go/database/model"
+		_ "github.com/veno-sql-driver/mysql"
+		"github.com/qq15725/veno/database/dsn"
+		"github.com/qq15725/veno/database/model"
 		"models"
     )
   
@@ -96,7 +96,7 @@
     package models
     
     import (
-    	"github.com/qq15725/go/database/model"
+    	"github.com/qq15725/veno/database/model"
     )
     
     type User struct {
@@ -113,8 +113,8 @@
     package controller
     
     import (
-    	"github.com/qq15725/go/database/model"
-    	"github.com/qq15725/go/veno"
+    	"github.com/qq15725/veno/database/model"
+    	"github.com/qq15725/veno/veno"
     	"net/http"
     	"models"
     )
@@ -137,8 +137,8 @@
     package main
     
     import (
-        _ "github.com/go-sql-driver/mysql"
-        "github.com/qq15725/go/veno"
+        _ "github.com/veno-sql-driver/mysql"
+        "github.com/qq15725/veno/veno"
         "controller"
         "log"
         "path"

@@ -1,7 +1,8 @@
 package grammars
 
 import (
-	"github.com/qq15725/go/database/contracts"
+	"fmt"
+	"github.com/qq15725/veno/database/contracts"
 	"regexp"
 	"strconv"
 	"strings"
@@ -106,4 +107,44 @@ func (gr *Grammar) CompileSelect(queryBuilder contracts.QueryBuilder) string {
 	}
 
 	return strings.Join(filteredComponents, " ")
+}
+
+func (gr *Grammar) CompileInsert(queryBuilder contracts.QueryBuilder, values []map[string]interface{}) string {
+	columns := make([]string, 0)
+	parameterizes := make([]string, 0)
+
+	for column := range values[0] {
+		columns = append(columns, column)
+	}
+
+	for _, parameter := range values {
+		parameterizes = append(parameterizes, "("+gr.parameterize(parameter)+")")
+	}
+
+	return fmt.Sprintf(
+		"insert into %s (%s) values %s",
+		queryBuilder.GetBuilderFrom(),
+		gr.columnize(columns),
+		strings.Join(parameterizes, ", "),
+	)
+}
+
+func (gr *Grammar) columnize(columns []string) string {
+	columnize := make([]string, 0)
+	for _, column := range columns {
+		columnize = append(columnize, column)
+	}
+	return strings.Join(columnize, ", ")
+}
+
+func (gr *Grammar) parameterize(values map[string]interface{}) string {
+	parameterize := make([]string, 0)
+	for _, v := range values {
+		parameterize = append(parameterize, gr.parameter(v))
+	}
+	return strings.Join(parameterize, ", ")
+}
+
+func (gr *Grammar) parameter(value interface{}) string {
+	return "?"
 }

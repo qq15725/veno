@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"github.com/qq15725/go/database/query/grammars"
+	"github.com/qq15725/veno/database/query/grammars"
 )
 
 type Connection struct {
@@ -10,8 +10,25 @@ type Connection struct {
 	Grammar *grammars.Grammar
 }
 
-func (conn *Connection) Select(query string, args ...interface{}) []map[string]interface{} {
-	Rows, _ := conn.sqlDB.Query(query, args...)
+func (conn *Connection) insert(query string, bindings []interface{}) (sql.Result, error) {
+	stmt, err := conn.sqlDB.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+	res, err := stmt.Exec(bindings...)
+	if err != nil {
+		return nil, err
+	}
+	stmt.Close()
+	return res, nil
+}
+
+func (conn *Connection) SelectOne(query string, bindings []interface{}) map[string]interface{} {
+	return conn.Select(query, bindings...)[0]
+}
+
+func (conn *Connection) Select(query string, bindings ...interface{}) []map[string]interface{} {
+	Rows, _ := conn.sqlDB.Query(query, bindings...)
 	cols, _ := Rows.Columns()
 	values := make([][]byte, len(cols))
 	scans := make([]interface{}, len(cols))
@@ -27,6 +44,7 @@ func (conn *Connection) Select(query string, args ...interface{}) []map[string]i
 		}
 		rows = append(rows, row)
 	}
+	Rows.Close()
 	return rows
 }
 

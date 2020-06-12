@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/qq15725/go/database"
-	"github.com/qq15725/go/database/query"
+	"github.com/qq15725/veno/database"
+	"github.com/qq15725/veno/database/query"
 )
 
 type Model struct {

@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/qq15725/go/database/dsn"
+	"github.com/qq15725/veno/database/dsn"
 )
 
 type config struct {

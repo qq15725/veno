@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"github.com/qq15725/go/database/query/grammars"
+	"github.com/qq15725/veno/database/query/grammars"
 )
 
 func Open(driver string, source string) (conn *Connection, err error) {
