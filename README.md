@@ -37,7 +37,7 @@
   
     import (
 		"fmt"
-		_ "github.com/veno-sql-driver/mysql"
+		_ "github.com/go-sql-driver/mysql"
 		"github.com/qq15725/veno/database/dsn"
 		"github.com/qq15725/veno/database/model"
 		"models"
@@ -137,7 +137,7 @@
     package main
     
     import (
-        _ "github.com/veno-sql-driver/mysql"
+        _ "github.com/go-sql-driver/mysql"
         "github.com/qq15725/veno/veno"
         "controller"
         "log"
